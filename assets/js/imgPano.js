@@ -62,20 +62,48 @@
 
 	    var extend = __webpack_require__(4).extend;
 	    var detector = __webpack_require__(5).detector;
-
-	    var InstaImgPano = function (option,bundleInterface) {
+	    var mobileDetector = __webpack_require__(7).mobileDetector();
+	    var InstaImgPano = function (option, bundleInterface) {
 
 	        var obj = {};
 	        var _protected = {};
-	        var _interface = bundleInterface || {};
+	        var _interface = bundleInterface || undefined;
 
+	        console.log(detector);
+	        console.log(mobileDetector);
 	        // Config
 	        var defaultOptions = {
+	            containerId: '',
 	            src:'',
-	            fov:105
+	            fov:105,
+	            mobile: mobileDetector.any,
+	            render: detector.webgl ? 'webGL' : 'canvas'
 	        };
 
-	        var currentOptions = extend(defaultOptions,option);
+	        var currentOptions = extend(defaultOptions, option);
+
+	        //检查当前浏览器环境是否支持配置要求
+	        _protected.preCheck = function(opt) {
+	            var msg = {};
+	            msg.isok = true;
+	            if(!detector.webgl && !detector.canvas) {
+	                msg.isok = false;
+	                msg.msg = 'this device may not support webgl & canvas';
+	            } 
+	            if (!detector.webgl && opt.render === 'webGl') {
+	                msg.isok = false;
+	                msg.msg = 'this device may not support webgl';
+	            }
+	            if (!detector.canvas && opt.render === 'canvas') {
+	                msg.isok = false;
+	                msg.msg = 'this device may not support canvas';
+	            }
+	            if(!opt.containerId) {
+	                msg.isok = false;
+	                msg.msg = 'container DOM element ID is required!';
+	            }
+	            return msg;
+	        }
 
 	        // Protected
 	        _protected.prepare = function () {
@@ -83,7 +111,6 @@
 	            window.THREE = THREE;
 	            window.Hammer = HAMMER;
 
-	            return detector.webgl && detector.canvas;
 	        };
 
 	        _protected.create = function () {
@@ -101,7 +128,7 @@
 
 
 	            var orbitControls = __webpack_require__(6).orbitControls;
-
+	            var containerEle = document.getElementById(currentOptions.containerId);
 	            function initPano() {
 
 	                // DOM - IMG
@@ -126,28 +153,37 @@
 	                mesh = new THREE.Mesh(geometry, material);
 	                //mesh.scale.x = 1;
 
-	                camera = new THREE.PerspectiveCamera(currentOptions.fov, window.innerWidth / window.innerHeight, 1, 10000);
+	                camera = new THREE.PerspectiveCamera(currentOptions.fov, containerEle.clientWidth / containerEle.clientHeight, 1, 10000); 
 
 	                scene = new THREE.Scene();
 	                scene.add(mesh);
+	                console.log(currentOptions);
+	                if(currentOptions.render === 'webGL') {
+	                    renderer = new THREE.WebGLRenderer({antialias: true,precision:'highp',alpha:true});
+	                }
+	                if(currentOptions.render === 'CSS33D') {
+	                    renderer = new THREE.CSS3DRenderer({antialias: true,precision:'highp',alpha:true});
+	                }
+	                if(currentOptions.render === 'canvas') {
+	                    renderer = new THREE.CanvasRenderer({antialias: true,precision:'highp',alpha:true});
+	                }
 
-	                renderer = new THREE.WebGLRenderer({antialias: true,precision:'highp',alpha:true});
-	                //renderer = new THREE.CSS3DRenderer();
-	                //renderer = new THREE.CanvasRenderer({antialias: true,precision:'highp',alpha:true});
-	                renderer.setSize(window.innerWidth,window.innerHeight);
+	                renderer.setSize(containerEle.clientWidth,containerEle.clientHeight);
 
 	                // DOM CONTAINER
-	                document.getElementById('canvas').appendChild(renderer.domElement);
+	                containerEle.appendChild(renderer.domElement);
 
-	                controls = new orbitControls( camera, renderer.domElement,true);
+	                controls = new orbitControls( camera, renderer.domElement, currentOptions.mobile); //true 为移动设备
 
 
 	            }
 
 	            function onResize(){
-	                camera.aspect = window.innerWidth / window.innerHeight;
+	                console.log(containerEle.clientWidth+'------'+containerEle.clientHeight);
+	                camera.aspect = containerEle.clientWidth / containerEle.clientHeight;
+	                console.log(camera.aspect)
 	                camera.updateProjectionMatrix();
-	                renderer.setSize(window.innerWidth,window.innerHeight);
+	                renderer.setSize(containerEle.clientWidth,containerEle.clientHeight);
 	            }
 
 	            function animate() {
@@ -168,8 +204,18 @@
 	        };
 
 	        obj.init = function () {
-	            _protected.prepare();
-	            _protected.create();
+	            var checkMsg = _protected.preCheck(currentOptions);
+	            if(checkMsg.isok) {
+	                _protected.prepare();
+	                _protected.create();
+	                _interface && _interface.onUpdate();
+	            } else {
+	                if(_interface && _interface.onError) {
+	                    _interface.onError(checkMsg);
+	                } else {
+	                    console.error(checkMsg);
+	                }
+	            }
 	        };
 
 	        return obj;
@@ -41392,6 +41438,53 @@
 	};
 
 
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	/**
+	 *
+	 * mobileDetector.
+	 *
+	 * @project     localhost_panoplayer
+	 * @datetime    14:39 - 25/07/2015
+	 * @author      Thonatos.Yang <thonatos.yang@gmail.com>
+	 * @copyright   Thonatos.Yang <https://www.thonatos.com>
+	 *
+	 */
+
+	var mobileDetector = function () {
+
+	    var that = this;
+
+	    this._device = {
+	        android: false,
+	        ios: false,
+	        windows: false,
+	        any: false,
+	        blackberry: false
+	    };
+
+	    (function () {
+	        that._device.android = /Android/i.test(navigator.userAgent);
+	        that._device.ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+	        that._device.windows = /IEMobile/i.test(navigator.userAgent);
+	        that._device.blackberry = /BlackBerry/i.test(navigator.userAgent);
+	        that._device.any = that._device.ios || that._device.android || that._device.windows || that._device.blackberry;
+
+	    })();
+
+	    return {
+	        android: that._device.android,
+	        ios: that._device.ios,
+	        windows: that._device.windows,
+	        blackberry: that._device.blackberry,
+	        any: that._device.any
+	    };
+	};
+
+	exports.mobileDetector = mobileDetector;
 
 /***/ }
 /******/ ]);

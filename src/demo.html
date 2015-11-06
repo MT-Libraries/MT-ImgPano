@@ -18,9 +18,9 @@
         }
     </style>
 </head>
-<body>
+<body id='body'>
 
-    <div id="canvas" class="canvas">
+    <div id="canvas" class="canvas" >
 
     </div>
 
@@ -30,12 +30,14 @@
     <script>
 
         var imgPano = new InstaImgPano({
+            containerId: 'canvas',
             src:'../assets/images/campus.png',
             fov:105,
-            render:'webGL' // css3d||webGL
+            render:'webGL', // canvas||webGL
+            mobile: true
         },{
             onError: function (msg) {
-
+                console.log(msg);
             },
             onUpdate: function () {
 
