@@ -72,7 +72,7 @@
             var canvas,
                 texture,
                 img,
-                geometry,
+                geometry, 
                 material,
                 mesh,
                 camera,
@@ -88,9 +88,9 @@
 
                 // DOM - IMG
                 img = new Image();
-                img.onload = function() {
+                img.onload = function() { 
                     texture.needsUpdate = true;
-                };
+                }; 
                 img.src = currentOptions.src;
 
                 // TEXTURE
@@ -127,7 +127,6 @@
                 // DOM CONTAINER
                 containerEle.appendChild(renderer.domElement);
 
-                console.log(currentOptions);
                 if(currentOptions.mobile && currentOptions.gyro) { //移动设备&开启陀螺仪
                     controls = new gyroControls(camera); 
                 } else {

@@ -46,7 +46,7 @@ exports.orbitControls = function (object, domElement, mobile) {
     // FOR MOBILE DEVICE
 
     function onPinch(ev) {
-
+ 
         if (ev.type == 'pinchstart') {
             initScale = targetScale || 1;
         }
@@ -57,7 +57,6 @@ exports.orbitControls = function (object, domElement, mobile) {
         distance -= initScale * 50;
 
         distance = Math.max(200, Math.min(distance, 1200));
-
         //mtlog(distance);
         scope.object.projectionMatrix.makePerspective(fov, window.innerWidth / window.innerHeight, 1, 10000);
         // render();
@@ -82,7 +81,7 @@ exports.orbitControls = function (object, domElement, mobile) {
 
         if (isUserInteracting) {
 
-            lon = onPointerDownLon + (ev.center.x - onPointerDownPointerX) * 0.8;
+            lon = onPointerDownLon + (ev.center.x - onPointerDownPointerX) * 0.2;
             lat = onPointerDownLat - (ev.center.y - onPointerDownPointerY) * 0.2;
 
             if (typeof ev.stopPropagation === "function") {
@@ -147,7 +146,7 @@ exports.orbitControls = function (object, domElement, mobile) {
     this.connect = function () {
 
         if (scope.mobile) {
-            mc.on("pinchstart pinchmove", onPinch);
+            //mc.on("pinchstart pinchmove", onPinch);
             mc.on("panstart", onPanStart);
             mc.on("panmove", onPanMove);
             mc.on("panend", onPanEnd);
@@ -186,9 +185,7 @@ exports.orbitControls = function (object, domElement, mobile) {
     };
 
     this.update = function () {
-
         if (!scope.enabled) return;
-
         lat = Math.max(-90, Math.min(90, lat));
         phi = THREE.Math.degToRad(lat);
         theta = THREE.Math.degToRad(lon);
