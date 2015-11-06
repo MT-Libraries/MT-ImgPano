@@ -62,15 +62,14 @@
 
 	    var extend = __webpack_require__(4).extend;
 	    var detector = __webpack_require__(5).detector;
-	    var mobileDetector = __webpack_require__(7).mobileDetector();
-	    var InstaImgPano = function (option, bundleInterface) {
+	    var mobileDetector = __webpack_require__(6).mobileDetector();
+
+	    var ImgPano = function (option,bundleInterface) {
 
 	        var obj = {};
 	        var _protected = {};
 	        var _interface = bundleInterface || undefined;
 
-	        console.log(detector);
-	        console.log(mobileDetector);
 	        // Config
 	        var defaultOptions = {
 	            containerId: '',
@@ -127,7 +126,7 @@
 	                controls;
 
 
-	            var orbitControls = __webpack_require__(6).orbitControls;
+	            var orbitControls = __webpack_require__(7).orbitControls;
 	            var containerEle = document.getElementById(currentOptions.containerId);
 	            function initPano() {
 
@@ -157,7 +156,6 @@
 
 	                scene = new THREE.Scene();
 	                scene.add(mesh);
-	                console.log(currentOptions);
 	                if(currentOptions.render === 'webGL') {
 	                    renderer = new THREE.WebGLRenderer({antialias: true,precision:'highp',alpha:true});
 	                }
@@ -179,9 +177,7 @@
 	            }
 
 	            function onResize(){
-	                console.log(containerEle.clientWidth+'------'+containerEle.clientHeight);
 	                camera.aspect = containerEle.clientWidth / containerEle.clientHeight;
-	                console.log(camera.aspect)
 	                camera.updateProjectionMatrix();
 	                renderer.setSize(containerEle.clientWidth,containerEle.clientHeight);
 	            }
@@ -222,9 +218,9 @@
 
 	    };
 
-	    window[exportName] = InstaImgPano;
+	    window[exportName] = ImgPano;
 
-	})(window,document,'InstaImgPano');
+	})(window,document,'ImgPano');
 
 
 
@@ -41233,6 +41229,53 @@
 
 	/**
 	 *
+	 * mobileDetector.
+	 *
+	 * @project     localhost_panoplayer
+	 * @datetime    14:39 - 25/07/2015
+	 * @author      Thonatos.Yang <thonatos.yang@gmail.com>
+	 * @copyright   Thonatos.Yang <https://www.thonatos.com>
+	 *
+	 */
+
+	var mobileDetector = function () {
+
+	    var that = this;
+
+	    this._device = {
+	        android: false,
+	        ios: false,
+	        windows: false,
+	        any: false,
+	        blackberry: false
+	    };
+
+	    (function () {
+	        that._device.android = /Android/i.test(navigator.userAgent);
+	        that._device.ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+	        that._device.windows = /IEMobile/i.test(navigator.userAgent);
+	        that._device.blackberry = /BlackBerry/i.test(navigator.userAgent);
+	        that._device.any = that._device.ios || that._device.android || that._device.windows || that._device.blackberry;
+
+	    })();
+
+	    return {
+	        android: that._device.android,
+	        ios: that._device.ios,
+	        windows: that._device.windows,
+	        blackberry: that._device.blackberry,
+	        any: that._device.any
+	    };
+	};
+
+	exports.mobileDetector = mobileDetector;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	/**
+	 *
 	 * orbitControls.
 	 *
 	 * @project     localhost_panoplayer
@@ -41438,53 +41481,6 @@
 	};
 
 
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	/**
-	 *
-	 * mobileDetector.
-	 *
-	 * @project     localhost_panoplayer
-	 * @datetime    14:39 - 25/07/2015
-	 * @author      Thonatos.Yang <thonatos.yang@gmail.com>
-	 * @copyright   Thonatos.Yang <https://www.thonatos.com>
-	 *
-	 */
-
-	var mobileDetector = function () {
-
-	    var that = this;
-
-	    this._device = {
-	        android: false,
-	        ios: false,
-	        windows: false,
-	        any: false,
-	        blackberry: false
-	    };
-
-	    (function () {
-	        that._device.android = /Android/i.test(navigator.userAgent);
-	        that._device.ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-	        that._device.windows = /IEMobile/i.test(navigator.userAgent);
-	        that._device.blackberry = /BlackBerry/i.test(navigator.userAgent);
-	        that._device.any = that._device.ios || that._device.android || that._device.windows || that._device.blackberry;
-
-	    })();
-
-	    return {
-	        android: that._device.android,
-	        ios: that._device.ios,
-	        windows: that._device.windows,
-	        blackberry: that._device.blackberry,
-	        any: that._device.any
-	    };
-	};
-
-	exports.mobileDetector = mobileDetector;
 
 /***/ }
 /******/ ]);

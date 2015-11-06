@@ -17,14 +17,13 @@
     var extend = require('./utils/extend').extend;
     var detector = require('./utils/detector').detector;
     var mobileDetector = require('./utils/mobileDetector').mobileDetector();
-    var InstaImgPano = function (option, bundleInterface) {
+
+    var ImgPano = function (option,bundleInterface) {
 
         var obj = {};
         var _protected = {};
         var _interface = bundleInterface || undefined;
 
-        console.log(detector);
-        console.log(mobileDetector);
         // Config
         var defaultOptions = {
             containerId: '',
@@ -111,7 +110,6 @@
 
                 scene = new THREE.Scene();
                 scene.add(mesh);
-                console.log(currentOptions);
                 if(currentOptions.render === 'webGL') {
                     renderer = new THREE.WebGLRenderer({antialias: true,precision:'highp',alpha:true});
                 }
@@ -133,9 +131,7 @@
             }
 
             function onResize(){
-                console.log(containerEle.clientWidth+'------'+containerEle.clientHeight);
                 camera.aspect = containerEle.clientWidth / containerEle.clientHeight;
-                console.log(camera.aspect)
                 camera.updateProjectionMatrix();
                 renderer.setSize(containerEle.clientWidth,containerEle.clientHeight);
             }
@@ -176,8 +172,8 @@
 
     };
 
-    window[exportName] = InstaImgPano;
+    window[exportName] = ImgPano;
 
-})(window,document,'InstaImgPano');
+})(window,document,'ImgPano');
 
 

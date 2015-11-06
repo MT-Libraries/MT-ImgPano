@@ -20,27 +20,24 @@
 </head>
 <body id='body'>
 
-    <div id="canvas" class="canvas" >
-
+    <div id="canvas" class="canvas" style="height:500px; width: 500px" >
     </div>
 
     <script src="../assets/vendors/jquery/dist/jquery.min.js"></script>
-    <script src="../assets/js/imgPano.js"></script>
+    <script src="../dist/imgPano.js"></script>
 
     <script>
 
-        var imgPano = new InstaImgPano({
-            containerId: 'canvas',
-            src:'../assets/images/campus.png',
-            fov:105,
-            render:'webGL', // canvas||webGL
-            mobile: true
-        },{
-            onError: function (msg) {
+        var imgPano = new ImgPano({
+            containerId: 'body', //必填  容器元素， ps: 必须指定width和height；
+            src:'../assets/images/campus.png', //必填 图片地址
+            fov:105,            //可选 视角 默认105
+            render:'webGL', // canvas||webGL //可选 默认优先使用webGL，浏览器不支持则退化到canvas
+            //mobile: ture, //ture||false //可选 默认为自动判断
+            onError: function(msg) { //可选 处理错误
                 console.log(msg);
             },
-            onUpdate: function () {
-
+            onUpdate: function() { //可选 成功渲染回调
             }
         });
 
