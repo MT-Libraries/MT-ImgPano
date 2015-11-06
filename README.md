@@ -17,11 +17,10 @@ var imgPano = new ImgPano({
     src:'../assets/images/campus.png',
     fov:105,
     render:'webGL' // css3d||webGL
-},{
-    onError: function (msg) {
+	onError: function (msg) {
 
     },
-    onUpdate: function () {
+    onUpdate: function (data) {
 
     }
 });
