@@ -63,7 +63,7 @@
 	    var extend = __webpack_require__(4).extend;
 	    var detector = __webpack_require__(5).detector;
 
-	    var InstaImgPano = function (option,bundleInterface) {
+	    var ImgPano = function (option,bundleInterface) {
 
 	        var obj = {};
 	        var _protected = {};
@@ -176,9 +176,9 @@
 
 	    };
 
-	    window[exportName] = InstaImgPano;
+	    window[exportName] = ImgPano;
 
-	})(window,document,'InstaImgPano');
+	})(window,document,'ImgPano');
 
 
 

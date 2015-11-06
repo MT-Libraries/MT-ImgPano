@@ -17,7 +17,7 @@
     var extend = require('./utils/extend').extend;
     var detector = require('./utils/detector').detector;
 
-    var InstaImgPano = function (option,bundleInterface) {
+    var ImgPano = function (option,bundleInterface) {
 
         var obj = {};
         var _protected = {};
@@ -130,8 +130,8 @@
 
     };
 
-    window[exportName] = InstaImgPano;
+    window[exportName] = ImgPano;
 
-})(window,document,'InstaImgPano');
+})(window,document,'ImgPano');
 
 

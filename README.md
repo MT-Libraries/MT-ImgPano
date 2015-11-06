@@ -13,7 +13,7 @@ Panoroma viewer for image.
 #### #config & init
 
 ```
-var imgPano = new InstaImgPano({
+var imgPano = new ImgPano({
     src:'../assets/images/campus.png',
     fov:105,
     render:'webGL' // css3d||webGL
@@ -27,6 +27,16 @@ var imgPano = new InstaImgPano({
 });
 
 imgPano.init();
+```
+
+## build
+
+```
+## build THREE.JS
+gulp js // while you add THREE.JS plugins, run this.
+
+## build ImgPano
+webpack -w src/js/imgPano.js dist/imgPano.js
 ```
 
 ## License
