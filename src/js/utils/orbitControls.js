@@ -138,7 +138,7 @@ exports.orbitControls = function (object, domElement, mobile) {
 
         }
 
-        distance = Math.max(300, Math.min(distance, 2100));
+        distance = Math.max(300, Math.min(distance, 1200));
 
         //mtlog(distance);
         scope.object.projectionMatrix.makePerspective(fov, window.innerWidth / window.innerHeight, 1, 10000);

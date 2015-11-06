@@ -57,7 +57,7 @@
 
 	(function (window, document, exportName) {
 
-	    var THREE = __webpack_require__(1);
+	    var THREE = __webpack_require__(1); 
 	    var HAMMER = __webpack_require__(2);
 
 	    var extend = __webpack_require__(4).extend;
@@ -76,7 +76,8 @@
 	            src:'',
 	            fov:105,
 	            mobile: mobileDetector.any,
-	            render: detector.webgl ? 'webGL' : 'canvas'
+	            render: detector.webgl ? 'webGL' : 'canvas',
+	            gyro: false
 	        };
 
 	        var currentOptions = extend(defaultOptions, option);
@@ -127,6 +128,7 @@
 
 
 	            var orbitControls = __webpack_require__(7).orbitControls;
+	            var gyroControls = __webpack_require__(8).gyroControls;
 	            var containerEle = document.getElementById(currentOptions.containerId);
 	            function initPano() {
 
@@ -171,8 +173,12 @@
 	                // DOM CONTAINER
 	                containerEle.appendChild(renderer.domElement);
 
-	                controls = new orbitControls( camera, renderer.domElement, currentOptions.mobile); //true 为移动设备
-
+	                console.log(currentOptions);
+	                if(currentOptions.mobile && currentOptions.gyro) { //移动设备&开启陀螺仪
+	                    controls = new gyroControls(camera); 
+	                } else {
+	                    controls = new orbitControls(camera, renderer.domElement, currentOptions.mobile); //true 为移动设备
+	                }
 
 	            }
 
@@ -41156,40 +41162,91 @@
 /* 4 */
 /***/ function(module, exports) {
 
-	/**
-	 *
-	 * extend.
-	 *
-	 * @project     imgPano
-	 * @datetime    23:21 - 15/11/5
-	 * @author      Thonatos.Yang <thonatos.yang@gmail.com>
-	 * @copyright   Thonatos.Yang <https://www.thonatos.com>
-	 *
-	 */
+	
+	'use strict';
 
+	var hasOwn = Object.prototype.hasOwnProperty;
+	var toStr = Object.prototype.toString;
 
-	/**
-	 *
-	 * extend.
-	 *
-	 * @project     localhost_panoplayer
-	 * @datetime    15:16 - 27/07/2015
-	 * @author      Thonatos.Yang <thonatos.yang@gmail.com>
-	 * @copyright   Thonatos.Yang <https://www.thonatos.com>
-	 *
-	 */
+	var isArray = function isArray(arr) {
+	    if (typeof Array.isArray === 'function') {
+	        return Array.isArray(arr);
+	    }
 
-	exports.extend = function (source, target) {
+	    return toStr.call(arr) === '[object Array]';
+	};
 
-	    if (target) {
-	        for (var key in target) {
-	            if (key in source) {
-	                source[key] = target[key];
+	var isPlainObject = function isPlainObject(obj) {
+	    if (!obj || toStr.call(obj) !== '[object Object]') {
+	        return false;
+	    }
+
+	    var hasOwnConstructor = hasOwn.call(obj, 'constructor');
+	    var hasIsPrototypeOf = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+	    // Not own constructor property must be Object
+	    if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
+	        return false;
+	    }
+
+	    // Own properties are enumerated firstly, so to speed up,
+	    // if last one is own, then all properties are own.
+	    var key;
+	    for (key in obj) {/**/}
+
+	    return typeof key === 'undefined' || hasOwn.call(obj, key);
+	};
+
+	exports.extend = function extend() {
+	    var options, name, src, copy, copyIsArray, clone,
+	        target = arguments[0],
+	        i = 1,
+	        length = arguments.length,
+	        deep = false;
+
+	    // Handle a deep copy situation
+	    if (typeof target === 'boolean') {
+	        deep = target;
+	        target = arguments[1] || {};
+	        // skip the boolean and the target
+	        i = 2;
+	    } else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+	        target = {};
+	    }
+
+	    for (; i < length; ++i) {
+	        options = arguments[i];
+	        // Only deal with non-null/undefined values
+	        if (options != null) {
+	            // Extend the base object
+	            for (name in options) {
+	                src = target[name];
+	                copy = options[name];
+
+	                // Prevent never-ending loop
+	                if (target !== copy) {
+	                    // Recurse if we're merging plain objects or arrays
+	                    if (deep && copy && (isPlainObject(copy) || (copyIsArray = isArray(copy)))) {
+	                        if (copyIsArray) {
+	                            copyIsArray = false;
+	                            clone = src && isArray(src) ? src : [];
+	                        } else {
+	                            clone = src && isPlainObject(src) ? src : {};
+	                        }
+
+	                        // Never move original objects, clone them
+	                        target[name] = extend(deep, clone, copy);
+
+	                    // Don't bring in undefined values
+	                    } else if (typeof copy !== 'undefined') {
+	                        target[name] = copy;
+	                    }
+	                }
 	            }
 	        }
 	    }
 
-	    return source;
+	    // Return the modified object
+	    return target;
 	};
 
 /***/ },
@@ -41414,7 +41471,7 @@
 
 	        }
 
-	        distance = Math.max(300, Math.min(distance, 2100));
+	        distance = Math.max(300, Math.min(distance, 1200));
 
 	        //mtlog(distance);
 	        scope.object.projectionMatrix.makePerspective(fov, window.innerWidth / window.innerHeight, 1, 10000);
@@ -41481,6 +41538,114 @@
 	};
 
 
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	/**
+	 *
+	 * DeviceOrientationControls.
+	 *
+	 * @project     localhost_panoplayer
+	 * @datetime    17:28 - 28/07/2015
+	 * @author      Thonatos.Yang <thonatos.yang@gmail.com>
+	 * @copyright   Thonatos.Yang <https://www.thonatos.com>
+	 *
+	 */
+
+	/**
+	 * @author richt / http://richt.me
+	 * @author WestLangley / http://github.com/WestLangley
+	 *
+	 * W3C Device Orientation control (http://w3c.github.io/deviceorientation/spec-source-orientation.html)
+	 */
+
+	exports.gyroControls = function (object) {
+
+	    var scope = this;
+
+	    this.object = object;
+	    this.object.rotation.reorder("YXZ");
+
+	    this.enabled = true;
+
+	    this.deviceOrientation = {};
+	    this.screenOrientation = 0;
+
+	    var onDeviceOrientationChangeEvent = function (event) {
+
+	        scope.deviceOrientation = event;
+
+	    };
+
+	    var onScreenOrientationChangeEvent = function () {
+
+	        scope.screenOrientation = window.orientation || 0;
+
+	    };
+
+	    // The angles alpha, beta and gamma form a set of intrinsic Tait-Bryan angles of type Z-X'-Y''
+
+	    var setObjectQuaternion = function () {
+
+	        var zee = new THREE.Vector3(0, 0, 1);
+
+	        var euler = new THREE.Euler();
+
+	        var q0 = new THREE.Quaternion();
+
+	        var q1 = new THREE.Quaternion(-Math.sqrt(0.5), 0, 0, Math.sqrt(0.5)); // - PI/2 around the x-axis
+
+	        return function (quaternion, alpha, beta, gamma, orient) {
+
+	            euler.set(beta, alpha, -gamma, 'YXZ');                       // 'ZXY' for the device, but 'YXZ' for us
+
+	            quaternion.setFromEuler(euler);                               // orient the device
+
+	            quaternion.multiply(q1);                                      // camera looks out the back of the device, not the top
+
+	            quaternion.multiply(q0.setFromAxisAngle(zee, -orient));    // adjust for screen orientation
+
+	        }
+
+	    }();
+
+	    this.connect = function () {
+
+	        onScreenOrientationChangeEvent(); // run once on load
+
+	        window.addEventListener('orientationchange', onScreenOrientationChangeEvent, false);
+	        window.addEventListener('deviceorientation', onDeviceOrientationChangeEvent, false);
+
+	        scope.enabled = true;
+
+	    };
+
+	    this.disconnect = function () {
+
+	        window.removeEventListener('orientationchange', onScreenOrientationChangeEvent, false);
+	        window.removeEventListener('deviceorientation', onDeviceOrientationChangeEvent, false);
+
+	        scope.enabled = false;
+
+	    };
+
+	    this.update = function () {
+
+	        if (scope.enabled === false) return;
+
+	        var alpha = scope.deviceOrientation.alpha ? THREE.Math.degToRad(scope.deviceOrientation.alpha) : 0; // Z
+	        var beta = scope.deviceOrientation.beta ? THREE.Math.degToRad(scope.deviceOrientation.beta) : 0; // X'
+	        var gamma = scope.deviceOrientation.gamma ? THREE.Math.degToRad(scope.deviceOrientation.gamma) : 0; // Y''
+	        var orient = scope.screenOrientation ? THREE.Math.degToRad(scope.screenOrientation) : 0; // O
+
+	        setObjectQuaternion(scope.object.quaternion, alpha, beta, gamma, orient);
+	    };
+
+	    this.connect();
+
+	};
 
 /***/ }
 /******/ ]);

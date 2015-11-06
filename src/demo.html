@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <title>Desktop Demo</title>
 
-    <link rel="stylesheet" href="../assets/vendors/normalize-css/normalize.css">
-    <script src="../assets/js/modernizr-lite.js"></script>
     <style>
         html,body{
             padding: 0;
@@ -20,20 +18,20 @@
 </head>
 <body id='body'>
 
-    <div id="canvas" class="canvas" style="height:500px; width: 500px" >
+    <div id="canvas" class="canvas" style="height:100%; width: 100%" >
     </div>
 
-    <script src="../assets/vendors/jquery/dist/jquery.min.js"></script>
     <script src="../dist/imgPano.js"></script>
 
     <script>
 
         var imgPano = new ImgPano({
-            containerId: 'body', //必填  容器元素， ps: 必须指定width和height；
+            containerId: 'canvas', //必填  容器元素， ps: 必须指定width和height；
             src:'../assets/images/campus.png', //必填 图片地址
             fov:105,            //可选 视角 默认105
             render:'webGL', // canvas||webGL //可选 默认优先使用webGL，浏览器不支持则退化到canvas
-            //mobile: ture, //ture||false //可选 默认为自动判断
+            //mobile: true, //true||false //可选 默认为自动判断
+            gyro: true, //可选 为true则在移动设备模式下开启陀螺仪
             onError: function(msg) { //可选 处理错误
                 console.log(msg);
             },

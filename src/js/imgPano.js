@@ -11,7 +11,7 @@
 
 (function (window, document, exportName) {
 
-    var THREE = require('./vendors/three');
+    var THREE = require('./vendors/three'); 
     var HAMMER = require('./vendors/hammer');
 
     var extend = require('./utils/extend').extend;
@@ -30,7 +30,8 @@
             src:'',
             fov:105,
             mobile: mobileDetector.any,
-            render: detector.webgl ? 'webGL' : 'canvas'
+            render: detector.webgl ? 'webGL' : 'canvas',
+            gyro: false
         };
 
         var currentOptions = extend(defaultOptions, option);
@@ -81,6 +82,7 @@
 
 
             var orbitControls = require('./utils/orbitControls').orbitControls;
+            var gyroControls = require('./utils/gyroControls').gyroControls;
             var containerEle = document.getElementById(currentOptions.containerId);
             function initPano() {
 
@@ -125,8 +127,12 @@
                 // DOM CONTAINER
                 containerEle.appendChild(renderer.domElement);
 
-                controls = new orbitControls( camera, renderer.domElement, currentOptions.mobile); //true 为移动设备
-
+                console.log(currentOptions);
+                if(currentOptions.mobile && currentOptions.gyro) { //移动设备&开启陀螺仪
+                    controls = new gyroControls(camera); 
+                } else {
+                    controls = new orbitControls(camera, renderer.domElement, currentOptions.mobile); //true 为移动设备
+                }
 
             }
 
