@@ -7,7 +7,7 @@ Panoroma viewer for image.
 #### #include js
 
 ```
-<script src="../assets/js/imgPano.js"></script>
+<script src="../dist/imgPano.js"></script>
 ```
 
 #### #config & init
