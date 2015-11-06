@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Desktop Demo</title>
+
+    <link rel="stylesheet" href="../assets/vendors/normalize-css/normalize.css">
+    <script src="../assets/js/modernizr-lite.js"></script>
+    <style>
+        html,body{
+            padding: 0;
+            margin: 0;
+
+            width:100%;
+            height: 100%;
+
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas" class="canvas">
+
+    </div>
+
+    <script src="../assets/vendors/jquery/dist/jquery.min.js"></script>
+    <script src="../assets/js/imgPano.js"></script>
+
+    <script>
+
+        var imgPano = new InstaImgPano({
+            src:'../assets/images/campus.png',
+            fov:105,
+            render:'webGL' // css3d||webGL
+        },{
+            onError: function (msg) {
+
+            },
+            onUpdate: function () {
+
+            }
+        });
+
+        imgPano.init();
+
+    </script>
+</body>
+</html>

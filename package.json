@@ -1,0 +1,27 @@
+{
+  "name": "mt-imgpaono",
+  "version": "0.1.0",
+  "description": "Panoroma viewer for image",
+  "main": "",
+  "dependencies": {
+    "gulp-concat": "^2.6.0",
+    "gulp": "^3.9.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://git@github.com/MT-Libraries/MT-ImgPano.git"
+  },
+  "keywords": [
+    "panoroma"
+  ],
+  "author": "Thonatos.Yang <thonatos.yang@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MT-Libraries/MT-ImgPano/issues"
+  },
+  "homepage": "https://github.com/MT-Libraries/MT-ImgPano#readme"
+}

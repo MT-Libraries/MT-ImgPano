@@ -1,0 +1,16 @@
+{
+  "name": "MT-ImgPano",
+  "authors": [
+    "Thonatos.Yang <thonatos.yang@gmail.com>"
+  ],
+  "description": "Panoroma viewer for image",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "https://www.thonatos.com/",
+  "private": true,
+  "dependencies": {
+    "normalize-css": "normalize.css#~3.0.3",
+    "jquery": "~2.1.4"
+  }
+}
